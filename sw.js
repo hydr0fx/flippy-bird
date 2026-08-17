@@ -1,19 +1,28 @@
-var CACHE = 'flippybird-v3.2.0';
+const CACHE_NAME = 'flippy-bird-cache-v2';
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-512-maskable.png', './apple-icon.png'];
 
-self.addEventListener('install', e => {
-  e.waitUntil(self.skipWaiting());
-});
-
-self.addEventListener('activate', e => {
+self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.keys().then(function(keys) { return Promise.all(keys.map(function(k) { return caches.delete(k); })); }).then(function(){ return self.clients.claim(); })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    fetch(e.request).then(function(r) { return r; }).catch(function() {
-      return caches.match(e.request);
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      );
     })
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((res) => res || fetch(e.request))
   );
 });
