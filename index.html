@@ -75,6 +75,26 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .modal-sheet {
+      animation: slideUp .3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tab-fade {
+      animation: tabIn .3s ease;
+    }
+    @keyframes tabIn {
+      from { opacity: 0; transform: translateX(6px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .pressable {
+      transition: transform .15s ease, box-shadow .2s ease;
+    }
+    .pressable:active {
+      transform: scale(0.97);
+    }
   </style>
 </head>
 <body class="bg-lightBg dark:bg-darkBg text-slate-900 dark:text-slate-100 min-h-screen flex justify-center selection:bg-brand selection:text-white transition-colors duration-200">
@@ -111,7 +131,7 @@
       <section id="tab-dashboard" class="space-y-4">
         <!-- KPI Cards Grid -->
         <div class="grid grid-cols-2 gap-3">
-          <div class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between">
+          <div onclick="switchTab('reselling');setResellSubTab('stats')" class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.97] transition">
             <div class="flex justify-between items-center mb-1">
               <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Monatsgewinn</span>
               <div class="p-1.5 bg-profit/10 rounded-lg text-profit">
@@ -122,7 +142,7 @@
             <div id="dash-month-sales-count" class="text-[11px] text-slate-400">0 Verkäufe</div>
           </div>
 
-          <div class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between">
+          <div onclick="switchTab('finance')" class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.97] transition">
             <div class="flex justify-between items-center mb-1">
               <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Restbudget</span>
               <div class="p-1.5 bg-brand/10 rounded-lg text-brand">
@@ -133,7 +153,7 @@
             <div id="dash-monthly-target" class="text-[11px] text-slate-400">Limit: 2.500 €</div>
           </div>
 
-          <div class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between">
+          <div onclick="switchTab('reselling');setResellSubTab('inventory')" class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.97] transition">
             <div class="flex justify-between items-center mb-1">
               <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Auf Lager</span>
               <div class="p-1.5 bg-tealAccent/10 rounded-lg text-tealAccent">
@@ -144,7 +164,7 @@
             <div id="dash-stock-value" class="text-[11px] text-slate-400">EK-Wert: 0 €</div>
           </div>
 
-          <div class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between">
+          <div onclick="switchTab('calendar');setCalendarSubTab('todos')" class="bg-white dark:bg-darkCard p-3.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.97] transition">
             <div class="flex justify-between items-center mb-1">
               <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Offene To-Dos</span>
               <div class="p-1.5 bg-amber-500/10 rounded-lg text-amber-500">
@@ -157,7 +177,7 @@
         </div>
 
         <!-- Budget Bar Card -->
-        <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm space-y-2.5">
+        <div onclick="switchTab('finance')" class="bg-white dark:bg-darkCard p-4 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm space-y-2.5 cursor-pointer active:scale-[0.98] transition">
           <div class="flex justify-between items-center text-xs">
             <span class="font-bold">Monatliche Budget-Auslastung</span>
             <span id="dash-budget-percent" class="font-black text-brand">0%</span>
@@ -455,6 +475,19 @@
               </div>
             </div>
           </div>
+
+          <!-- Widget Preview 3: Kalender -->
+          <div class="bg-slate-200 dark:bg-slate-900 p-4 rounded-3xl border border-lightBorder dark:border-darkBorder">
+            <div class="bg-white dark:bg-darkCard p-3.5 rounded-2xl shadow-lg border border-lightBorder dark:border-darkBorder space-y-2">
+              <div class="flex items-center space-x-1.5">
+                <i data-lucide="calendar" class="w-4 h-4 text-brand"></i>
+                <span class="text-xs font-bold">Flippy Bird Kalender</span>
+              </div>
+              <div id="widget-calendar-list" class="space-y-1.5">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Standort Einstellung -->
@@ -504,8 +537,8 @@
             <div class="flex items-center space-x-3">
               <i data-lucide="refresh-cw" class="w-4 h-4 text-tealAccent"></i>
               <div>
-                <div class="text-xs font-bold">Demo-Daten neu laden</div>
-                <div class="text-[11px] text-slate-400">Setzt realistische Resell-Beispiele zurück</div>
+                <div class="text-xs font-bold">Alle Daten zurücksetzen</div>
+                <div class="text-[11px] text-slate-400">Leert Artikel, Buchungen, To-Dos und Termine</div>
               </div>
             </div>
             <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
@@ -513,7 +546,7 @@
         </div>
 
         <div class="text-center text-xs text-slate-400 pt-2">
-          Flippy Bird Web/PWA App v2.0.0<br>Design inspiriert von Kleinanzeigen
+          Flippy Bird Web/PWA App v3.0.0<br>Design inspiriert von Kleinanzeigen
         </div>
       </section>
 
@@ -686,9 +719,51 @@
       </div>
     </div>
 
+    <!-- MODAL 2b: ALS VERKAUFT MARKIEREN -->
+    <div id="modal-mark-sold" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs modal-sheet">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold text-base">Verkauf erfassen</h3>
+          <button onclick="closeModal('modal-mark-sold')" class="p-1 rounded-full text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <p id="sold-modal-item-title" class="font-bold text-brand"></p>
+        <form onsubmit="handleMarkAsSold(event)" class="space-y-3">
+          <input type="hidden" id="sold-item-id">
+          <div>
+            <label class="block font-bold mb-1">Verkaufspreis (€) *</label>
+            <input id="sold-price" required type="number" step="0.01" placeholder="z. B. 85.00" class="w-full bg-slate-50 dark:bg-darkElevated border border-lightBorder dark:border-darkBorder rounded-xl p-3 focus:outline-none focus:border-brand">
+          </div>
+          <div>
+            <label class="block font-bold mb-1">Plattform</label>
+            <select id="sold-platform" class="w-full bg-slate-50 dark:bg-darkElevated border border-lightBorder dark:border-darkBorder rounded-xl p-3 focus:outline-none focus:border-brand">
+              <option value="Kleinanzeigen">Kleinanzeigen</option>
+              <option value="eBay">eBay</option>
+              <option value="Vinted">Vinted</option>
+              <option value="Flohmarkt">Flohmarkt</option>
+              <option value="Direktverkauf">Direktverkauf</option>
+              <option value="Sonstiges">Sonstiges</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold mb-1">Versandkosten (€)</label>
+              <input id="sold-shipping" type="number" step="0.01" value="0.00" class="w-full bg-slate-50 dark:bg-darkElevated border border-lightBorder dark:border-darkBorder rounded-xl p-3 focus:outline-none focus:border-brand">
+            </div>
+            <div>
+              <label class="block font-bold mb-1">Gebühren (€)</label>
+              <input id="sold-fees" type="number" step="0.01" value="0.00" class="w-full bg-slate-50 dark:bg-darkElevated border border-lightBorder dark:border-darkBorder rounded-xl p-3 focus:outline-none focus:border-brand">
+            </div>
+          </div>
+          <button type="submit" class="w-full bg-brand text-white font-bold py-3.5 rounded-xl shadow-md hover:bg-brand-dark transition text-sm">
+            Verkauf speichern & Gewinn berechnen
+          </button>
+        </form>
+      </div>
+    </div>
+
     <!-- MODAL 3: FINANZBUCHUNG ERFASSEN / BEARBEITEN -->
     <div id="modal-add-tx" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs">
+      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs modal-sheet">
         <div class="flex justify-between items-center">
           <h3 id="add-tx-title" class="font-bold text-base">Buchung erfassen</h3>
           <button onclick="closeModal('modal-add-tx')" class="p-1 rounded-full text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -731,7 +806,7 @@
 
     <!-- MODAL 4: TO-DO ERSTELLEN / BEARBEITEN -->
     <div id="modal-add-todo" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs">
+      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs modal-sheet">
         <div class="flex justify-between items-center">
           <h3 id="add-todo-title" class="font-bold text-base">Neue Aufgabe</h3>
           <button onclick="closeModal('modal-add-todo')" class="p-1 rounded-full text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -765,7 +840,7 @@
 
     <!-- MODAL 5: TERMIN ERSTELLEN / BEARBEITEN -->
     <div id="modal-add-event" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs">
+      <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-lightBorder dark:border-darkBorder p-4 space-y-3 text-xs modal-sheet">
         <div class="flex justify-between items-center">
           <h3 id="add-event-title" class="font-bold text-base">Neuen Termin eintragen</h3>
           <button onclick="closeModal('modal-add-event')" class="p-1 rounded-full text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -839,108 +914,21 @@
     const DEFAULT_FOOTER = 'Abholung möglich in {loc} oder Versand per PayPal FF. Da Privatverkauf, keine Rückgabe oder Garantie.';
     const DEFAULT_LOCATION = '55122 Mainz';
 
-    // Default Seed Data
+    // Default empty data (keine Presets)
     const defaultData = {
       monthlyBudget: 2500,
       location: DEFAULT_LOCATION,
       footer: DEFAULT_FOOTER,
-      resellItems: [
-        {
-          id: 'resell_1',
-          title: 'Sony PlayStation 5 Disc Edition (OVP)',
-          buyPrice: 280,
-          buyDate: '2026-08-06',
-          category: 'Elektronik & Gaming',
-          condition: 'Sehr gut',
-          status: 'sold',
-          targetPrice: 450,
-          salePrice: 420,
-          saleDate: '2026-08-16',
-          platform: 'Kleinanzeigen',
-          shippingCost: 0,
-          platformFees: 0,
-          image: '',
-          notes: ''
-        },
-        {
-          id: 'resell_2',
-          title: 'LEGO Star Wars Millennium Falcon 75257',
-          buyPrice: 65,
-          buyDate: '2026-07-28',
-          category: 'Spielzeug & LEGO',
-          condition: 'Gut',
-          status: 'sold',
-          targetPrice: 150,
-          salePrice: 135,
-          saleDate: '2026-08-13',
-          platform: 'eBay',
-          shippingCost: 6.99,
-          platformFees: 14.85,
-          image: '',
-          notes: ''
-        },
-        {
-          id: 'resell_3',
-          title: 'Apple iPhone 13 128GB Midnight',
-          buyPrice: 310,
-          buyDate: '2026-08-14',
-          category: 'Smartphones & Apple',
-          condition: 'Sehr gut',
-          status: 'inStock',
-          targetPrice: 420,
-          image: '',
-          notes: ''
-        },
-        {
-          id: 'resell_4',
-          title: 'Vintage Biker Lederjacke Schott NYC Gr. L',
-          buyPrice: 35,
-          buyDate: '2026-08-10',
-          category: 'Kleidung & Vintage',
-          condition: 'Gut',
-          status: 'inStock',
-          targetPrice: 89,
-          image: '',
-          notes: ''
-        },
-        {
-          id: 'resell_5',
-          title: 'Nintendo Switch OLED Weiß + Zelda BOTW',
-          buyPrice: 190,
-          buyDate: '2026-08-12',
-          category: 'Elektronik & Gaming',
-          condition: 'Wie neu',
-          status: 'reserved',
-          targetPrice: 260,
-          image: '',
-          notes: ''
-        }
-      ],
-      transactions: [
-        { id: 'tx_1', title: 'Hauptgehalt Netto', amount: 2850, type: 'income', category: 'Gehalt & Einkommen', date: '2026-08-01' },
-        { id: 'tx_2', title: 'Reselling Gewinn PS5 & Lego', amount: 188.16, type: 'income', category: 'Reselling-Gewinn', date: '2026-08-16' },
-        { id: 'tx_3', title: 'Warmmiete & Nebenkosten', amount: 890, type: 'expense', category: 'Miete & Wohnen', date: '2026-08-02' },
-        { id: 'tx_4', title: 'Wocheneinkauf REWE', amount: 114.50, type: 'expense', category: 'Lebensmittel & Haushalt', date: '2026-08-15' },
-        { id: 'tx_5', title: 'Tanken & Waschanlage', amount: 78.00, type: 'expense', category: 'Transport & Auto', date: '2026-08-11' },
-        { id: 'tx_6', title: 'Internet & Mobilfunk', amount: 49.99, type: 'expense', category: 'Verträge & Abos', date: '2026-08-05' }
-      ],
-      todos: [
-        { id: 'todo_1', title: 'Nintendo Switch für Abholung vorbereiten', priority: 'high', completed: false, linkedResell: 'Nintendo Switch OLED Weiß + Zelda BOTW' },
-        { id: 'todo_2', title: 'Fotos vom iPhone 13 bei Tageslicht machen', priority: 'medium', completed: false, linkedResell: 'Apple iPhone 13 128GB Midnight' },
-        { id: 'todo_3', title: 'Flohmarktkiste im Keller sortieren', priority: 'low', completed: false },
-        { id: 'todo_4', title: 'Lego Falcon Paket bei DHL abgegeben', priority: 'high', completed: true }
-      ],
-      events: [
-        { id: 'ev_1', title: 'Abholung: Nintendo Switch OLED (Barzahlung)', date: '2026-08-19', time: '18:00', type: 'Abholung', location: 'Zuhause an der Haustür' },
-        { id: 'ev_2', title: 'DHL Paketshop: Vintage Lederjacke versenden', date: '2026-08-20', time: '11:30', type: 'Versand', location: 'Postfiliale Hauptstraße 14' },
-        { id: 'ev_3', title: 'Großer Antik- & Trödelmarkt', date: '2026-08-23', time: '08:00', type: 'Flohmarkt', location: 'Festplatz Messegelände' }
-      ]
+      resellItems: [],
+      transactions: [],
+      todos: [],
+      events: []
     };
 
     // Load from LocalStorage or seed
-    let appData = JSON.parse(localStorage.getItem('flippy_bird_data_v2')) || JSON.parse(JSON.stringify(defaultData));
+    let appData = JSON.parse(localStorage.getItem('flippy_bird_data_v3')) || JSON.parse(JSON.stringify(defaultData));
 
-    // Upgrade old data (v1 -> v2)
+    // Upgrade old data (v2 -> v3)
     if (!appData.footer) appData.footer = DEFAULT_FOOTER;
     if (!appData.location) appData.location = DEFAULT_LOCATION;
     appData.resellItems.forEach(i => {
@@ -950,7 +938,7 @@
 
     // ==================== HELPERS ====================
     function saveData() {
-      localStorage.setItem('flippy_bird_data_v2', JSON.stringify(appData));
+      localStorage.setItem('flippy_bird_data_v3', JSON.stringify(appData));
       renderAll();
     }
 
@@ -1006,6 +994,7 @@
         if (t === tabId) {
           btn.className = 'flex flex-col items-center flex-1 py-1 text-brand';
           btn.querySelector('span').className = 'text-[10px] font-bold';
+          document.getElementById(`tab-${t}`).classList.add('tab-fade');
         } else {
           btn.className = 'flex flex-col items-center flex-1 py-1 text-slate-400 hover:text-brand';
           btn.querySelector('span').className = 'text-[10px] font-medium';
@@ -1025,7 +1014,8 @@
 
     // Modal Helpers
     function openModal(id) {
-      document.getElementById(id).classList.remove('hidden');
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
       if (id === 'modal-budget-target') {
         document.getElementById('budget-target-input').value = appData.monthlyBudget;
       }
@@ -1726,7 +1716,7 @@
     }
 
     function resetDemoData() {
-      if (confirm('Möchtest du die Demo-Daten wirklich neu laden?')) {
+      if (confirm('Alle Daten wirklich zurücksetzen?')) {
         appData = JSON.parse(JSON.stringify(defaultData));
         saveData();
       }
@@ -1759,8 +1749,8 @@
 
       const totalExpenses = appData.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
       const totalIncome = appData.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-      const remainingBudget = appData.monthlyBudget - totalExpenses;
-      const budgetPercent = Math.min(100, Math.round((totalExpenses / appData.monthlyBudget) * 100));
+      const remainingBudget = appData.monthlyBudget + totalIncome - totalExpenses;
+      const budgetPercent = Math.min(100, Math.round((totalExpenses / Math.max(1, appData.monthlyBudget + totalIncome)) * 100));
 
       document.getElementById('dash-month-profit').innerText = '+' + formatEuro(totalProfit);
       document.getElementById('dash-month-sales-count').innerText = `${soldItems.length} Verkäufe`;
@@ -1779,7 +1769,7 @@
       // Dash Events
       const eventsContainer = document.getElementById('dash-events-list');
       eventsContainer.innerHTML = appData.events.slice(0, 2).map(ev => `
-        <div class="bg-white dark:bg-darkCard p-3 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center space-x-3">
+        <div onclick="switchTab('calendar');selectCalDate('${ev.date}')" class="bg-white dark:bg-darkCard p-3 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center space-x-3 cursor-pointer active:scale-[0.98] transition">
           <div class="p-2 rounded-xl bg-tealAccent/10 text-tealAccent"><i data-lucide="calendar" class="w-4 h-4"></i></div>
           <div class="flex-1 min-w-0">
             <div class="font-bold text-xs truncate">${ev.title}</div>
@@ -1791,9 +1781,9 @@
       // Dash To-Dos
       const todosContainer = document.getElementById('dash-todos-list');
       todosContainer.innerHTML = openTodos.slice(0, 3).map(t => `
-        <div class="bg-white dark:bg-darkCard p-2.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center justify-between">
+        <div onclick="switchTab('calendar');setCalendarSubTab('todos')" class="bg-white dark:bg-darkCard p-2.5 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center justify-between cursor-pointer active:scale-[0.98] transition">
           <div class="flex items-center space-x-2.5 min-w-0">
-            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo('${t.id}')" class="w-4 h-4 rounded text-brand focus:ring-0">
+            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo('${t.id}')" onclick="event.stopPropagation()" class="w-4 h-4 rounded text-brand focus:ring-0">
             <span class="text-xs font-semibold truncate ${t.completed ? 'line-through text-slate-400' : ''}">${t.title}</span>
           </div>
           <span class="text-[10px] font-bold px-2 py-0.5 rounded-md ${t.priority === 'high' ? 'bg-red-500/10 text-red-500' : 'bg-amber-500/10 text-amber-500'}">
@@ -1807,7 +1797,7 @@
       salesContainer.innerHTML = soldItems.slice(0, 2).map(item => {
         const p = calcProfit(item);
         return `
-          <div class="bg-white dark:bg-darkCard p-3 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center space-x-3">
+          <div onclick="switchTab('reselling');openItemDetail('${item.id}')" class="bg-white dark:bg-darkCard p-3 rounded-2xl border border-lightBorder dark:border-darkBorder shadow-sm flex items-center space-x-3 cursor-pointer active:scale-[0.98] transition">
             <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-darkElevated overflow-hidden flex items-center justify-center shrink-0">
               ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : `<i data-lucide="package" class="w-5 h-5 text-slate-400"></i>`}
             </div>
@@ -1961,9 +1951,9 @@
       const txFilter = document.getElementById('tx-filter').value;
       const expenses = appData.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
       const income = appData.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-      const remaining = appData.monthlyBudget - expenses;
+      const remaining = appData.monthlyBudget + income - expenses;
       const net = income - expenses;
-      const usage = Math.min(100, Math.round((expenses / appData.monthlyBudget) * 100));
+      const usage = Math.min(100, Math.round((expenses / Math.max(1, appData.monthlyBudget + income)) * 100));
 
       document.getElementById('fin-remaining-budget').innerText = formatEuro(remaining);
       document.getElementById('fin-net-balance').innerText = (net >= 0 ? '+' : '') + formatEuro(net);
@@ -2043,15 +2033,30 @@
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         const isSelected = dateStr === calSelectedDate;
+        const isToday = dateStr === todayStr();
         const hasEvent = appData.events.some(e => e.date === dateStr);
 
+        let cls = 'py-2 rounded-xl relative font-semibold transition';
+        if (isSelected) {
+          cls += ' bg-brand text-white font-bold shadow-md';
+        } else if (isToday) {
+          cls += ' ring-2 ring-brand ring-inset text-brand-dark dark:text-brand bg-brand/5';
+        } else {
+          cls += ' hover:bg-slate-100 dark:hover:bg-darkElevated';
+        }
+
         grid.innerHTML += `
-          <button onclick="selectCalDate('${dateStr}')" class="py-2 rounded-xl relative font-semibold transition ${isSelected ? 'bg-brand text-white font-bold shadow-md' : 'hover:bg-slate-100 dark:hover:bg-darkElevated'}">
+          <button onclick="selectCalDate('${dateStr}')" class="${cls}">
             ${d}
             ${hasEvent ? `<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-tealAccent'}"></span>` : ''}
           </button>
         `;
       }
+    }
+
+    function todayStr() {
+      const t = new Date();
+      return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
     }
 
     function renderSelectedDayEvents() {
@@ -2105,6 +2110,7 @@
 
     function renderWidgets() {
       const openTodos = appData.todos.filter(t => !t.completed);
+      const totalIncome = appData.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
       document.getElementById('widget-todo-count-badge').innerText = `${openTodos.length} offen`;
       if (openTodos.length > 0) {
         document.getElementById('widget-next-task').innerHTML = `<span class="w-2 h-2 rounded-full bg-brand"></span><span class="truncate">${openTodos[0].title}</span>`;
@@ -2114,12 +2120,27 @@
       }
 
       const totalExpenses = appData.transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
-      const remaining = appData.monthlyBudget - totalExpenses;
+      const remaining = appData.monthlyBudget + totalIncome - totalExpenses;
       const soldItems = appData.resellItems.filter(i => i.status === 'sold');
       const totalProfit = soldItems.reduce((sum, i) => sum + calcProfit(i), 0);
 
       document.getElementById('widget-budget-val').innerText = formatEuro(remaining);
       document.getElementById('widget-profit-val').innerText = '+' + formatEuro(totalProfit);
+
+      const calWidget = document.getElementById('widget-calendar-list');
+      const upcoming = [...appData.events].sort((a, b) => (a.date + (a.time||'')).localeCompare(b.date + (b.time||''))).slice(0, 3);
+      calWidget.innerHTML = upcoming.map(ev => `
+        <div class="flex items-center space-x-2 bg-slate-50 dark:bg-darkElevated p-1.5 rounded-lg">
+          <div class="w-8 text-center shrink-0">
+            <div class="text-[8px] uppercase font-bold text-slate-400 leading-none">${['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][parseInt(ev.date.split('-')[1], 10) - 1] || ''}</div>
+            <div class="text-xs font-black text-brand leading-tight">${parseInt(ev.date.split('-')[2], 10) || ''}</div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-[11px] font-bold truncate">${ev.title}</div>
+            <div class="text-[10px] text-tealAccent font-semibold">${ev.time || ''} Uhr ${ev.location ? '• ' + ev.location : ''}</div>
+          </div>
+        </div>
+      `).join('') || '<div class="text-[11px] text-slate-400 text-center py-2">Keine Termine eingetragen</div>';
       lucide.createIcons();
     }
 

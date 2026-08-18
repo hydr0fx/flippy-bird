@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flippy-bird-cache-v2';
+const CACHE_NAME = 'flippy-bird-cache-v3';
 const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-512-maskable.png', './apple-icon.png'];
 
 self.addEventListener('install', (e) => {

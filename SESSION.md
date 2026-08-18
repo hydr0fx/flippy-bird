@@ -1,3 +1,54 @@
+# Sitzung 18.08.2026 – v3.0
+
+## Änderungen
+
+### Fix: Verkaufen & Bearbeiten funktioniert jetzt
+- **Ursache:** Das "Als verkauft markieren"-Modal (`modal-mark-sold`) fehlte komplett im HTML – nur die JS-Funktionen existierten. Klick auf "Verkauft?" führte zu einem JS-Crash (null element), wodurch das Bearbeiten von Artikeln nicht mehr funktionierte.
+- **Fix:** Modal mit Verkaufspreis, Plattform, Versandkosten, Gebühren wieder eingebaut.
+
+### Preset-Daten entfernt
+- Alle Demo-/Seed-Daten (5 Resell-Artikel, 6 Buchungen, 4 To-Dos, 3 Termine) entfernt.
+- App startet jetzt leer: `resellItems: []`, `transactions: []`, `todos: []`, `events: []`.
+- Storage-Key auf `flippy_bird_data_v3` gehoben → bestehende Demo-Daten werden nicht mehr geladen.
+- "Demo-Daten neu laden" → "Alle Daten zurücksetzen".
+
+### Kalender
+- **Heutiger Tag immer leicht markiert** (Ring + dezenter Hintergrund), unabhängig von der Auswahl.
+
+### Übersicht (Dashboard) klickbar
+- Monatsgewinn-Karte → Statistik-Tab
+- Restbudget-Karte + Budget-Bar → Finanzen-Tab
+- Auf-Lager-Karte → Inventar
+- To-Dos-Karte → Kalender (To-Do-Subtab)
+- Termin-Liste → Kalender (springt zum Datum)
+- To-Do-Liste → Kalender (To-Do-Subtab)
+- Letzte-Verkäufe-Liste → Detailansicht des Artikels
+
+### Monatsbudget verbessert
+- Restbudget wird jetzt **inklusive Einnahmen** berechnet: `Budget + Einnahmen − Ausgaben`
+- Budget-Bar berücksichtigt Einnahmen ebenfalls.
+
+### Saubere Übergänge
+- Modal-Sheets: Slide-Up-Animation (`modal-sheet`)
+- Tab-Wechsel: Fade-In (`tab-fade`)
+- Karten: Press-Effekt + Hover-Transition
+- Budget-Bar: animierte Breite
+
+### Kalender-Widget
+- Neues "Flippy Bird Kalender"-Widget im Widget-Simulator (Settings) mit den nächsten 3 Terminen.
+
+### Sonstiges
+- `sw.js` Cache auf `flippy-bird-cache-v3` gehoben.
+- Settings-Version auf v3.0.0.
+
+## Status
+- **Live:** https://hydr0fx.github.io/flippy-bird/ (GitHub Pages)
+- **SW Cache:** v3
+- **Kein Backend** – reine Client-PWA
+- **Keine automatische Kleinanzeigen-Postings** – nur Export + Copy
+
+---
+
 # Sitzung 23.05.2026 – v3.1
 
 ## Änderungen seit v3.0
